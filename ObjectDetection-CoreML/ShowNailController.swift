@@ -112,7 +112,7 @@ class ShowNailController: UIViewController, ARSCNViewDelegate, ARSessionDelegate
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        boxesView.isDistance3D = false
+//        boxesView.isDistance3D = false
     }
     
     // Setup Functions
@@ -245,7 +245,7 @@ class ShowNailController: UIViewController, ARSCNViewDelegate, ARSessionDelegate
     
     // Configure BoundingBoxView
     func configureBoundingBoxView() {
-        boxesView.isDistance3D = true
+//        boxesView.isDistance3D = true
         boxesView.predictedObjects = nails
         boxesView.sceneView = sceneView
         boxesView.startDistance = fromDistance
