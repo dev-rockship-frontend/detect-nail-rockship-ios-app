@@ -52,32 +52,87 @@ class DrawingBoundingBoxView: UIView {
         super.draw(rect)
         guard let context = UIGraphicsGetCurrentContext() else { return }
         context.clear(rect)
-        drawBoundingBoxes()
+//        drawBoundingBoxes()
+        drawBoundingBoxes(on: sceneView)
         drawConnectingLines(context: context)
     }
 
     // Draw bounding boxes for predicted objects
-    func drawBoundingBoxes() {
-        subviews.forEach({ $0.removeFromSuperview() })
-
-        for prediction in predictedObjects {
-            createLabelAndBox(prediction: prediction)
-        }
-    }
+//    func drawBoundingBoxes() {
+//        guard let sceneView = sceneView else {
+//            debugPrint("sceneView = nil ")
+//            return
+//        }
+//        
+//        sceneView.subviews.forEach({ $0.removeFromSuperview() })
+//
+//        for prediction in predictedObjects {
+//            createLabelAndBox(prediction: prediction, on: sceneView)
+//        }
+//    }
 
     // Create label and box for each prediction
-    func createLabelAndBox(prediction: VNRecognizedObjectObservation) {
-        let scale = CGAffineTransform.identity.scaledBy(x: bounds.width, y: bounds.height)
-        let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -1)
-        let bgRect = prediction.boundingBox.applying(transform).applying(scale)
+//    func createLabelAndBox(prediction: VNRecognizedObjectObservation) {
+//        let scale = CGAffineTransform.identity.scaledBy(x: bounds.width, y: bounds.height)
+//        let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -1)
+//        let bgRect = prediction.boundingBox.applying(transform).applying(scale)
+//
+//        let bgView = UIView(frame: bgRect)
+//        bgView.layer.borderColor = UIColor.green.cgColor
+//        bgView.layer.borderWidth = 1
+//        bgView.backgroundColor = UIColor.clear
+//        addSubview(bgView)
+//    }
 
+    func createLabelAndBox(prediction: VNRecognizedObjectObservation, on sceneView: ARSCNView) {
+        // Chuyển đổi bounding box từ hệ tọa độ của ARKit sang hệ tọa độ của sceneView
+        let boundingBox = prediction.boundingBox
+        let minX = boundingBox.minX * sceneView.bounds.width
+        let minY = (1 - boundingBox.maxY) * sceneView.bounds.height
+        let width = boundingBox.width * sceneView.bounds.width
+        let height = boundingBox.height * sceneView.bounds.height
+        
+        // Kiểm tra nếu bounding box nằm trong phạm vi hợp lý
+//        guard minX >= 0, minY >= 0, minX + width <= sceneView.bounds.width, minY + height <= sceneView.bounds.height else {
+//            return
+//        }
+        
+        // Chuyển đổi tọa độ 3D của các góc bounding box sang tọa độ 2D của sceneView
+        let topLeft = sceneView.projectPoint(SCNVector3(minX, minY, 0))
+        let topRight = sceneView.projectPoint(SCNVector3(minX + width, minY, 0))
+        let bottomLeft = sceneView.projectPoint(SCNVector3(minX, minY + height, 0))
+        let bottomRight = sceneView.projectPoint(SCNVector3(minX + width, minY + height, 0))
+        
+        // Kiểm tra nếu các tọa độ 2D này nằm trong phạm vi của sceneView
+        let points = [topLeft, topRight, bottomLeft, bottomRight]
+//        guard points.allSatisfy({ $0.x >= 0 && $0.x <= Float(sceneView.bounds.width) && $0.y >= 0 && $0.y <= Float(sceneView.bounds.height) }) else {
+//            debugPrint("allSatisfy = nil")
+//            return
+//        }
+        
+        let bgRect = CGRect(x: minX, y: minY, width: width, height: height)
+        
         let bgView = UIView(frame: bgRect)
         bgView.layer.borderColor = UIColor.green.cgColor
         bgView.layer.borderWidth = 1
         bgView.backgroundColor = UIColor.clear
-        addSubview(bgView)
+        sceneView.addSubview(bgView)
+//        scannedFaceViews.append(bgView)
     }
 
+    func drawBoundingBoxes(on sceneView: ARSCNView?) {
+        guard let sceneView = sceneView else { return }
+        
+        // Xóa tất cả các subviews của sceneView
+        sceneView.subviews.forEach({ $0.removeFromSuperview() })
+        
+        debugPrint("predictedObjects :\(predictedObjects.count)")
+        
+        for prediction in predictedObjects {
+            createLabelAndBox(prediction: prediction, on: sceneView)
+        }
+    }
+    
     // Draw connecting lines between points
     func drawConnectingLines(context: CGContext) {
         guard predictedObjects.count > 1 else { return }

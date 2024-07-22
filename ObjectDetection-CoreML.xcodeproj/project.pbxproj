@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1B1B2BAB2C368DAC006A4C1D /* DetectNailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1B1B2BAA2C368DAC006A4C1D /* DetectNailViewController.xib */; };
+		1B2292762C4E933B002002CA /* FaceDetectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2292752C4E933B002002CA /* FaceDetectionViewController.swift */; };
 		1B62E55C2C4685B000BC01DB /* ShowNailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B62E55B2C4685B000BC01DB /* ShowNailController.swift */; };
 		1B62E55E2C482AC500BC01DB /* ThresholdProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B62E55D2C482AC500BC01DB /* ThresholdProvider.swift */; };
 		1BDA9BB92C3697D5002B62F5 /* DistanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BDA9BB82C3697D5002B62F5 /* DistanceViewController.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		1B1B2BAA2C368DAC006A4C1D /* DetectNailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetectNailViewController.xib; sourceTree = "<group>"; };
+		1B2292752C4E933B002002CA /* FaceDetectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewController.swift; sourceTree = "<group>"; };
 		1B62E55B2C4685B000BC01DB /* ShowNailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowNailController.swift; sourceTree = "<group>"; };
 		1B62E55D2C482AC500BC01DB /* ThresholdProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThresholdProvider.swift; sourceTree = "<group>"; };
 		1BDA9BB82C3697D5002B62F5 /* DistanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceViewController.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				554F149D220362AB00B828B0 /* DetectNailViewController.swift */,
 				1B1B2BAA2C368DAC006A4C1D /* DetectNailViewController.xib */,
 				1BDA9BB82C3697D5002B62F5 /* DistanceViewController.swift */,
+				1B2292752C4E933B002002CA /* FaceDetectionViewController.swift */,
 				1B62E55B2C4685B000BC01DB /* ShowNailController.swift */,
 				60F1FF2E2C292F7000AB415E /* DrawingBoundingBoxView.swift */,
 				60F1FF322C294C5300AB415E /* CoordinateSystemView.swift */,
@@ -363,6 +366,7 @@
 				554F149C220362AB00B828B0 /* AppDelegate.swift in Sources */,
 				60DCBF8A2C3ADC860093E1AA /* MeasureSCNView.swift in Sources */,
 				60F1FF332C294C5300AB415E /* CoordinateSystemView.swift in Sources */,
+				1B2292762C4E933B002002CA /* FaceDetectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
