@@ -130,6 +130,29 @@ class DrawingBoundingBoxView: UIView {
         return nil
     }
 
+    private func convert2Dto3D(_ point: CGPoint) -> SCNVector3? {
+        let nearVector = SCNVector3(x: Float(point.x), y: Float(point.y), z: 0)
+
+        guard let sceneView = sceneView else {
+            return nil
+        }
+        let nearScenePoint = sceneView.unprojectPoint(nearVector)
+        let farVector = SCNVector3(x: Float(point.x), y: Float(point.y), z: 1)
+        let farScenePoint = sceneView.unprojectPoint(farVector)
+
+        let viewVector = SCNVector3(x: Float(farScenePoint.x - nearScenePoint.x), y: Float(farScenePoint.y - nearScenePoint.y), z: Float(farScenePoint.z - nearScenePoint.z))
+
+        let vectorLength = sqrt(viewVector.x*viewVector.x + viewVector.y*viewVector.y + viewVector.z*viewVector.z)
+        let normalizedViewVector = SCNVector3(x: viewVector.x/vectorLength, y: viewVector.y/vectorLength, z: viewVector.z/vectorLength)
+
+        let scale = Float(15)
+        let scenePoint = SCNVector3(x: normalizedViewVector.x*scale, y: normalizedViewVector.y*scale, z: normalizedViewVector.z*scale)
+
+        print("2D point: \(point). 3D point: \(nearScenePoint). Far point: \(farScenePoint). scene point: \(scenePoint)")
+
+        return scenePoint
+    }
+
     // Draw lines through points with additional logic for angle and distance checks
 //    func drawLinesThroughPoints(context: CGContext, points: [CGPoint]) {
 //        let edges = createEdges(points: points)
@@ -193,30 +216,77 @@ class DrawingBoundingBoxView: UIView {
 
                 if angleX <= rangeDegree || angleY <= rangeDegree {
                     if isDistance3D {
-                        if let point1_3D = convertBoundingBoxTo3D(point1), let point2_3D = convertBoundingBoxTo3D(point2) {
-                            let distance3D = Double(calculateDistance(from: point1_3D, to: point2_3D) * 1000)
 
-                            print("distance:  \(distance3D)")
-
-                            if distance3D >= startDistance && distance3D <= endDistance {
-
-                                context.move(to: point1)
-                                context.addLine(to: point2)
-
-                                // Update the connection counts
-                                connectionCounts[point1]! += 1
-                                connectionCounts[point2]! += 1
-
-                                // Calculate midpoint for displaying distance
-                                let midpoint = CGPoint(x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2)
-
-                                let angle = min(angleX, angleY)
-
-                                displayDistanceLabel(at: midpoint, distance: "\(Int(distance3D)), \(Int(angle))°")
-                            }
-                        } else {
-                            print("Failed to get 3D coordinates for nails.")
+                        guard let p1 = convert2Dto3D(point1) else {
+                            return
                         }
+                        print("-------------")
+                        guard let p2 = convert2Dto3D(point2) else {
+                            return
+                        }
+
+                        let distance3D = Double(calculateDistance(from: p1, to: p2) * 1000)
+
+                        print("distance:  \(distance3D)")
+                        
+                        context.move(to: point1)
+                                                    context.addLine(to: point2)
+                        
+                        
+                        connectionCounts[point1]! += 1
+                        connectionCounts[point2]! += 1
+                        
+                        // Calculate midpoint for displaying distance
+                        let midpoint = CGPoint(x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2)
+                        
+                        let angle = min(angleX, angleY)
+                        
+                        displayDistanceLabel(at: midpoint, distance: "\(Int(distance3D))")
+                        
+                        
+
+//                        if distance3D >= startDistance && distance3D <= endDistance {
+//
+//                            context.move(to: point1)
+//                            context.addLine(to: point2)
+//
+//                            // Update the connection counts
+//                            connectionCounts[point1]! += 1
+//                            connectionCounts[point2]! += 1
+//
+//                            // Calculate midpoint for displaying distance
+//                            let midpoint = CGPoint(x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2)
+//
+//                            let angle = min(angleX, angleY)
+//
+//                            displayDistanceLabel(at: midpoint, distance: "\(Int(distance3D)), \(Int(angle))°")
+//
+//                        }
+
+//                        if let point1_3D = convertBoundingBoxTo3D(point1), let point2_3D = convertBoundingBoxTo3D(point2) {
+//                            let distance3D = Double(calculateDistance(from: point1_3D, to: point2_3D) * 1000)
+//
+//                            print("distance:  \(distance3D)")
+//
+//                            if distance3D >= startDistance && distance3D <= endDistance {
+//
+//                                context.move(to: point1)
+//                                context.addLine(to: point2)
+//
+//                                // Update the connection counts
+//                                connectionCounts[point1]! += 1
+//                                connectionCounts[point2]! += 1
+//
+//                                // Calculate midpoint for displaying distance
+//                                let midpoint = CGPoint(x: (point1.x + point2.x) / 2, y: (point1.y + point2.y) / 2)
+//
+//                                let angle = min(angleX, angleY)
+//
+//                                displayDistanceLabel(at: midpoint, distance: "\(Int(distance3D)), \(Int(angle))°")
+//                            }
+//                        } else {
+//                            print("Failed to get 3D coordinates for nails.")
+//                        }
                     }
                 }
             }
@@ -418,8 +488,8 @@ extension VNRecognizedObjectObservation {
 
 extension CGRect {
     func toString(digit: Int, width: CGFloat, height: CGFloat) -> String {
-        let xStr = String(format: "%.\(digit)f", origin.x * width)
-        let yStr = String(format: "%.\(digit)f", origin.y * height)
+        let xStr = String(format: "%.\(digit)f", origin.x)
+        let yStr = String(format: "%.\(digit)f", origin.y)
         return "(\(xStr), \(yStr))"
     }
 }
